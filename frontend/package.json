@@ -1,0 +1,23 @@
+{
+  "name": "attendance-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "html5-qrcode": "2.3.8",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "react-router-dom": "7.9.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.1",
+    "@vitejs/plugin-react": "5.0.4",
+    "vite": "7.1.9"
+  }
+}
