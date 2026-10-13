@@ -24,7 +24,7 @@ services:
         value: /var/data/uploads
       - key: FRONTEND_HOST
         fromService:
-          type: static
+          type: web
           name: attendance-web
           property: host
       - key: SEED_ADMIN_PASSWORD
@@ -42,11 +42,11 @@ services:
       - key: SEED_STUDENT4_PASSWORD
         generateValue: true
 
-  - type: static
+  - type: web
     name: attendance-web
-    rootDir: frontend
+    runtime: static
     buildCommand: npm ci && npm run build
-    staticPublishPath: dist
+    staticPublishPath: frontend/dist
     envVars:
       - key: VITE_API_BASE_URL
         fromService:
