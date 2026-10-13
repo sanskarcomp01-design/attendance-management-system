@@ -16,6 +16,10 @@ class Config:
     _db_url = os.getenv("DATABASE_URL", "sqlite:///attendance.db")
     if _db_url == "sqlite:///attendance.db":
         SQLALCHEMY_DATABASE_URI = "sqlite:///" + (BACKEND_DIR / "attendance.db").as_posix()
+    elif _db_url.startswith("postgres://"):
+        SQLALCHEMY_DATABASE_URI = _db_url.replace("postgres://", "postgresql+psycopg://", 1)
+    elif _db_url.startswith("postgresql://"):
+        SQLALCHEMY_DATABASE_URI = _db_url.replace("postgresql://", "postgresql+psycopg://", 1)
     else:
         SQLALCHEMY_DATABASE_URI = _db_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False

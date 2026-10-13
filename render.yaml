@@ -2,15 +2,10 @@ services:
   - type: web
     name: attendance-api
     runtime: python
-    plan: starter
+    plan: free
     buildCommand: pip install -r backend/requirements.txt && python backend/scripts/download_models.py
-    preDeployCommand: cd backend && python seed.py
-    startCommand: cd backend && gunicorn --bind 0.0.0.0:$PORT run:app
+    startCommand: cd backend && python seed.py && gunicorn --bind 0.0.0.0:$PORT run:app
     healthCheckPath: /api/health
-    disk:
-      name: attendance-data
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.8
@@ -19,9 +14,7 @@ services:
       - key: JWT_SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
-        value: sqlite:////var/data/attendance.db
-      - key: UPLOAD_FOLDER
-        value: /var/data/uploads
+        sync: false
       - key: FRONTEND_HOST
         fromService:
           type: web
