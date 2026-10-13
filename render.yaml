@@ -15,11 +15,8 @@ services:
         generateValue: true
       - key: DATABASE_URL
         sync: false
-      - key: FRONTEND_HOST
-        fromService:
-          type: web
-          name: attendance-web
-          property: host
+      - key: CORS_ORIGINS
+        value: http://localhost:5173,https://attendance-web-amdn.onrender.com
       - key: SEED_ADMIN_PASSWORD
         generateValue: true
       - key: SEED_TEACHER_PASSWORD
