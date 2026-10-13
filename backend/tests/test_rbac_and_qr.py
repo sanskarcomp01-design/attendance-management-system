@@ -29,6 +29,17 @@ def test_teacher_can_open_and_close_session(client, app):
     assert closed.get_json()["session"]["is_open"] is False
 
 
+def test_teacher_rejects_non_numeric_subject_id(client):
+    token = login(client, "teacher@test.edu", "Teacher@12345")
+    response = client.post(
+        "/api/teacher/sessions",
+        json={"subject_id": "not-a-number"},
+        headers=auth_header(token),
+    )
+    assert response.status_code == 400
+    assert response.get_json()["error"] == "Valid subject_id is required."
+
+
 def test_student_cannot_start_session(client, app):
     token = login(client, "student@test.edu", "Student@12345")
     with app.app_context():
@@ -177,3 +188,16 @@ def test_invalid_subject_class_id_is_reported(client, app):
         headers=auth_header(admin),
     )
     assert response.status_code == 400
+
+
+def test_admin_rejects_non_numeric_enrollment_student_id(client, app):
+    token = login(client, "admin@test.edu", "Admin@12345")
+    with app.app_context():
+        subject_id = Subject.query.filter_by(code="214443").first().id
+    response = client.post(
+        f"/api/admin/subjects/{subject_id}/enroll",
+        json={"student_id": "not-a-number"},
+        headers=auth_header(token),
+    )
+    assert response.status_code == 400
+    assert response.get_json()["error"] == "Valid student_id is required."

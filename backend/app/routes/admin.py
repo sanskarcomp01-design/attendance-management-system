@@ -278,7 +278,11 @@ def enroll_student(subject_id):
     if not subject:
         return jsonify({"error": "Subject not found."}), 404
     data = request.get_json(silent=True) or {}
-    student = db.session.get(User, int(data.get("student_id") or 0))
+    try:
+        student_id = int(data.get("student_id") or 0)
+    except (TypeError, ValueError):
+        return jsonify({"error": "Valid student_id is required."}), 400
+    student = db.session.get(User, student_id)
     if not student or student.role != "student":
         return jsonify({"error": "Valid student_id is required."}), 400
     existing = Enrollment.query.filter_by(student_id=student.id, subject_id=subject.id).first()

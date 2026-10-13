@@ -94,6 +94,17 @@ def test_manual_mark_requires_reason(client, app):
     assert response.status_code == 400
 
 
+def test_manual_mark_rejects_non_numeric_student_id(client, app):
+    token, session_id, _student_id, _subject_id = _open_session(client, app)
+    response = client.post(
+        f"/api/teacher/sessions/{session_id}/mark",
+        json={"student_id": "not-a-number", "status": "present", "reason": "Phone camera failed"},
+        headers=auth_header(token),
+    )
+    assert response.status_code == 400
+    assert response.get_json()["error"] == "Valid student_id is required."
+
+
 def test_student_cannot_manual_mark(client, app):
     _token, session_id, student_id, _subject_id = _open_session(client, app)
     student_token = login(client, "student@test.edu", "Student@12345")

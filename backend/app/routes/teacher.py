@@ -29,7 +29,11 @@ def my_subjects():
 @role_required("teacher")
 def open_session():
     data = request.get_json(silent=True) or {}
-    subject = _owned_subject(int(data.get("subject_id") or 0))
+    try:
+        subject_id = int(data.get("subject_id") or 0)
+    except (TypeError, ValueError):
+        return jsonify({"error": "Valid subject_id is required."}), 400
+    subject = _owned_subject(subject_id)
     if not subject:
         return jsonify({"error": "You can only start attendance for your assigned subjects."}), 403
 
