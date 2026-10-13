@@ -144,20 +144,6 @@ Teacher sign-in link on this computer: [http://localhost:5173/login](http://loca
 
 On Android, install the downloaded certificate from **Settings → Security/Privacy → Encryption & credentials → Install a certificate → CA certificate** (menu wording varies); Android may display a warning because this is a locally generated CA. On iPhone, open the downloaded profile, install it in **Settings → Profile Downloaded**, then enable it under **Settings → General → About → Certificate Trust Settings**. If a device cannot trust a locally installed CA, do not bypass certificate warnings or use that device for camera verification; use a publicly trusted HTTPS deployment instead.
 
-## Deploy to Render
-
-The repository includes a Render Blueprint (`render.yaml`) for a public HTTPS website and its Flask API. The app services can use Render's free tier, but attendance data must live in an external PostgreSQL database; the free web-service filesystem is temporary. This setup uses Neon Free for PostgreSQL, which does not require a credit card.
-
-1. Create a free PostgreSQL project on [Neon](https://neon.tech/) and copy its pooled connection string. Keep it private.
-2. In [Render](https://render.com), select **New → Blueprint** and connect this GitHub repository.
-3. When prompted for `DATABASE_URL`, paste the Neon connection string. Review the services and confirm their plans are **Free** before creating them.
-4. Wait for both services to finish deploying. Open the `attendance-web` URL to use the website, and check `https://<attendance-api-host>/api/health` for API status and `face_models_ready`.
-5. The first API start creates separate sample accounts and class data in the hosted database. Find each initial password in the API service's environment variables (`SEED_ADMIN_PASSWORD`, `SEED_TEACHER_PASSWORD`, or `SEED_STUDENT_PASSWORD`) and change it after signing in. Do not share these credentials publicly.
-
-Render's free API instance sleeps when idle, so the first request after inactivity may take about a minute. Neon Free can suspend its database while idle. These free services are for demos and are not production-grade; check each provider's current quotas, limits, and policies. The local `backend/attendance.db`, `.env`, uploads, and all other local files are not uploaded, modified, or deleted. Local records are not available on the hosted website unless you separately arrange a secure data migration.
-
-The deployment downloads the face-recognition model files during its build. This academic demo has not been hardened or privacy-reviewed for real student biometric data; obtain institutional approval and informed consent before collecting real students' data online.
-
 ## Seed account names
 
 The seed command creates these accounts and several additional sample classroom users:

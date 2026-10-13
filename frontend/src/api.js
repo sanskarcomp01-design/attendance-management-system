@@ -1,12 +1,4 @@
 const TOKEN_KEY = "ams_token";
-const configuredApiUrl = import.meta.env.VITE_API_BASE_URL || "";
-const API_BASE_URL = configuredApiUrl
-  ? `${/^https?:\/\//i.test(configuredApiUrl) ? "" : "https://"}${configuredApiUrl}`.replace(/\/+$/, "")
-  : "";
-
-function apiUrl(path) {
-  return `${API_BASE_URL}${path}`;
-}
 
 export function getToken() {
   return localStorage.getItem(TOKEN_KEY);
@@ -27,9 +19,9 @@ export async function api(path, options = {}) {
 
   let response;
   try {
-    response = await fetch(apiUrl(path), { ...options, headers });
+    response = await fetch(path, { ...options, headers });
   } catch {
-    throw new Error("Cannot reach the server. Check your connection and try again.");
+    throw new Error("Cannot reach the server. Start the Flask backend on port 5000.");
   }
   const text = await response.text();
   let data = {};
@@ -53,9 +45,9 @@ export async function downloadFile(path, filename) {
   if (token) headers.Authorization = `Bearer ${token}`;
   let response;
   try {
-    response = await fetch(apiUrl(path), { headers });
+    response = await fetch(path, { headers });
   } catch {
-    throw new Error("Cannot reach the server. Check your connection and try again.");
+    throw new Error("Cannot reach the server. Start the Flask backend on port 5000.");
   }
   if (!response.ok) {
     let message = "Download failed.";
