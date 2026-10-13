@@ -1,0 +1,59 @@
+services:
+  - type: web
+    name: attendance-api
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r backend/requirements.txt && python backend/scripts/download_models.py
+    preDeployCommand: cd backend && python seed.py
+    startCommand: cd backend && gunicorn --bind 0.0.0.0:$PORT run:app
+    healthCheckPath: /api/health
+    disk:
+      name: attendance-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:////var/data/attendance.db
+      - key: UPLOAD_FOLDER
+        value: /var/data/uploads
+      - key: FRONTEND_HOST
+        fromService:
+          type: static
+          name: attendance-web
+          property: host
+      - key: SEED_ADMIN_PASSWORD
+        generateValue: true
+      - key: SEED_TEACHER_PASSWORD
+        generateValue: true
+      - key: SEED_TEACHER2_PASSWORD
+        generateValue: true
+      - key: SEED_STUDENT_PASSWORD
+        generateValue: true
+      - key: SEED_STUDENT2_PASSWORD
+        generateValue: true
+      - key: SEED_STUDENT3_PASSWORD
+        generateValue: true
+      - key: SEED_STUDENT4_PASSWORD
+        generateValue: true
+
+  - type: static
+    name: attendance-web
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: attendance-api
+          property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

@@ -144,6 +144,19 @@ Teacher sign-in link on this computer: [http://localhost:5173/login](http://loca
 
 On Android, install the downloaded certificate from **Settings → Security/Privacy → Encryption & credentials → Install a certificate → CA certificate** (menu wording varies); Android may display a warning because this is a locally generated CA. On iPhone, open the downloaded profile, install it in **Settings → Profile Downloaded**, then enable it under **Settings → General → About → Certificate Trust Settings**. If a device cannot trust a locally installed CA, do not bypass certificate warnings or use that device for camera verification; use a publicly trusted HTTPS deployment instead.
 
+## Deploy to Render
+
+The repository includes a Render Blueprint (`render.yaml`) for a public HTTPS website and its Flask API. To launch it:
+
+1. Sign in to [Render](https://render.com), select **New → Blueprint**, and connect this GitHub repository.
+2. Review the services and costs before confirming. The API uses a paid instance and a 1 GB persistent disk so attendance records survive restarts and deploys; Render's free instances do not provide persistent disks.
+3. Wait for both services to finish deploying. Open the `attendance-web` URL to use the website, and check `https://<attendance-api-host>/api/health` for API status and `face_models_ready`.
+4. The first API deployment creates separate sample accounts and class data in the hosted database. Find each initial password in the API service's environment variables (`SEED_ADMIN_PASSWORD`, `SEED_TEACHER_PASSWORD`, or `SEED_STUDENT_PASSWORD`) and change it after signing in. Do not share these credentials publicly.
+
+This is a new hosted database: the local `backend/attendance.db`, `.env`, uploads, and other local files are not uploaded, modified, or deleted. Local records are not available on the hosted website unless you separately arrange a secure data migration. The hosted instance stores its database on the persistent disk; keep independent backups before using it for important records.
+
+The deployment downloads the face-recognition model files during its build. This academic demo has not been hardened or privacy-reviewed for real student biometric data; obtain institutional approval and informed consent before collecting real students' data online.
+
 ## Seed account names
 
 The seed command creates these accounts and several additional sample classroom users:

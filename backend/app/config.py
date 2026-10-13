@@ -20,10 +20,13 @@ class Config:
         SQLALCHEMY_DATABASE_URI = _db_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",") if o.strip()]
+    _frontend_host = os.getenv("FRONTEND_HOST")
+    if _frontend_host:
+        CORS_ORIGINS.append(f"https://{_frontend_host.removeprefix('https://').removeprefix('http://').rstrip('/')}")
     QR_TTL_SECONDS = int(os.getenv("QR_TTL_SECONDS", "20"))
     FACE_MATCH_THRESHOLD = float(os.getenv("FACE_MATCH_THRESHOLD", "0.363"))
     ATTENDANCE_ELIGIBILITY_PERCENT = float(os.getenv("ATTENDANCE_ELIGIBILITY_PERCENT", "75"))
-    UPLOAD_FOLDER = BACKEND_DIR / "uploads"
+    UPLOAD_FOLDER = Path(os.getenv("UPLOAD_FOLDER", BACKEND_DIR / "uploads"))
     MODEL_FOLDER = BACKEND_DIR / "models"
     MAX_CONTENT_LENGTH = 8 * 1024 * 1024
 
